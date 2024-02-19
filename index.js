@@ -1,4 +1,6 @@
-const fs = require("fs");
+import * as fs from "fs";
+import extractPartName from "./Utils/extractPartName.js";
+import extractProjectName from "./Utils/extractProjectName.js";
 
 function parseProbePoints(lines) {
   let gcode = "";
@@ -20,34 +22,6 @@ function parseProbePoints(lines) {
     }
   }
   return gcode;
-}
-
-function extractProjectName(lines) {
-  let projectName = "";
-  for (const element of lines) {
-    if (element.startsWith("$$ PROGRAM/")) {
-      const parts = element.split("/");
-      if (parts.length > 1) {
-        projectName = parts[1].trim();
-      }
-      break;
-    }
-  }
-  return projectName;
-}
-
-function extractPartName(lines) {
-  let projectName = "";
-  for (const element of lines) {
-    if (element.startsWith("$$ CATPRODUCT/")) {
-      const parts = element.split("/");
-      if (parts.length > 1) {
-        projectName = parts[1].trim();
-      }
-      break;
-    }
-  }
-  return projectName;
 }
 
 function main() {
