@@ -12,6 +12,10 @@ function catiaAptToGCode(lines) {
 
     if (line.startsWith("PPRINT") || line.startsWith("TPRINT/")) {
       gCode += `; ${line.substring(6)}\n`;
+    } else if (line.startsWith("$$ OPERATION NAME")) {
+      let parts = line.split(":");
+
+      gCode += `;  Operation: ${parts[1]}`;
     } else if (line.startsWith("LOADTL/")) {
       const params = line.split("/")[1].split(",");
       gCode += `N${lineNumber++} T${
@@ -44,7 +48,6 @@ function catiaAptToGCode(lines) {
       const arrOfCoords = gotoCoords.split(",");
       const [x, y, z, dirX, dirY, dirZ] = arrOfCoords;
       if (dirZ == 1) {
-        console.log(dirZ);
         gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
           Math.round(z * 1000) / 1000
         },100,100,3,2,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
@@ -54,12 +57,10 @@ function catiaAptToGCode(lines) {
         gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
           Math.round(x * 1000) / 1000
         },100,100,1,2,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
-        console.log(dirX);
       } else if (dirX == -1) {
         gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
           Math.round(x * 1000) / 1000
         },100,100,1,1,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
-        console.log(dirX);
       } else if (dirY == 1) {
         gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
           Math.round(y * 1000) / 1000
