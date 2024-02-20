@@ -15,12 +15,12 @@ function catiaAptToGCode(lines) {
     } else if (line.startsWith("$$ OPERATION NAME")) {
       let parts = line.split(":");
 
-      gCode += `;  Operation: ${parts[1]}`;
+      gCode += `;  Operation: ${parts[1]}N${lineNumber++} G54\n`;
     } else if (line.startsWith("LOADTL/")) {
       const params = line.split("/")[1].split(",");
       gCode += `N${lineNumber++} T${
         params[0]
-      }\nN${lineNumber++} M6\nN${lineNumber++} D1\n N${lineNumber++}UP_Z\n`;
+      }\nN${lineNumber++} M6\nN${lineNumber++} D1\nN${lineNumber++} UP_Z\n`;
     } else if (line.startsWith("RAPID") && nextLine?.startsWith("GOTO")) {
       let parts = nextLine.split("/");
       let coordinates = parts[1].split(",");
