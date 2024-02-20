@@ -1,4 +1,4 @@
-# Coordinate Direction Processor
+# Sinumerik post for probing
 
 This CNC probing program is designed to facilitate point probing operations on CNC machines. The program is written in JS language and is capable of translating apt to Sinumerik G-code.
 
