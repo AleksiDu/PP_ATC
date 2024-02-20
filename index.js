@@ -5,6 +5,8 @@ import extractProjectName from "./Utils/extractProjectName.js";
 function catiaAptToGCode(lines) {
   let gCode = "";
   let lineNumber = 1;
+  let isProbeSection = false;
+
   for (let line of lines) {
     const nextLine = lines[lines.indexOf(line) + 1];
 
@@ -34,13 +36,41 @@ function catiaAptToGCode(lines) {
         Math.round(feedValue[0] * 1000) / 1000
       }\n`;
     } else if (line.startsWith("PROBE/POINTS")) {
-      let parts = line.split(",");
-      gCode += `N${lineNumber++} G38.2 Z-${parts[5]} F${parts[3]}\n`;
-      gCode += `N${lineNumber++} G10 L20 P1 Z0.000\n`;
+      isProbeSection = true;
     } else if (line.startsWith("PROBE/OFF")) {
-      gCode += `N${lineNumber++} G0 Z50.000\n`;
-    } else if (line.startsWith("RAPID")) {
-      // Do nothing, already handled in GOTO
+      isProbeSection = false;
+    } else if (isProbeSection && line.startsWith("GOTO")) {
+      const gotoCoords = line.split("/ ")[1];
+      const arrOfCoords = gotoCoords.split(",");
+      const [x, y, z, dirX, dirY, dirZ] = arrOfCoords;
+      if (dirZ == 1) {
+        console.log(dirZ);
+        gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
+          Math.round(z * 1000) / 1000
+        },100,100,3,2,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
+      } else if (dirZ == -1) {
+        console.log("WRONG DIRECTION");
+      } else if (dirX == 1) {
+        gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
+          Math.round(x * 1000) / 1000
+        },100,100,1,2,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
+        console.log(dirX);
+      } else if (dirX == -1) {
+        gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
+          Math.round(x * 1000) / 1000
+        },100,100,1,1,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
+        console.log(dirX);
+      } else if (dirY == 1) {
+        gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
+          Math.round(y * 1000) / 1000
+        },100,100,2,1,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
+        console.log(dirY);
+      } else if (dirY == -1) {
+        console.log(dirY);
+        gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
+          Math.round(y * 1000) / 1000
+        },100,100,2,2,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
+      }
     }
   }
   return gCode;
