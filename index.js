@@ -2,6 +2,9 @@ import * as fs from "fs";
 import extractPartName from "./Utils/extractPartName.js";
 import extractProjectName from "./Utils/extractProjectName.js";
 
+const inputFile = "./Input/PROBE_A.aptsource";
+const outputFile = "./Output/PROBE_A.MPF";
+
 function catiaAptToGCode(lines) {
   let gCode = "";
   let lineNumber = 1;
@@ -82,9 +85,6 @@ function catiaAptToGCode(lines) {
 }
 
 function main() {
-  const inputFile = "./Input/PROBE_A.aptsource";
-  const outputFile = "./Output/PROBE_A.MPF";
-
   fs.readFile(inputFile, "utf8", (err, data) => {
     if (err) {
       console.error("Error reading input file:", err);
