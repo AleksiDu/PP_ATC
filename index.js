@@ -6,19 +6,33 @@ function catiaAptToGCode(lines) {
   let gCode = "";
   let lineNumber = 1;
   for (let line of lines) {
+    const nextLine = lines[lines.indexOf(line) + 1];
+
     if (line.startsWith("PPRINT") || line.startsWith("TPRINT/")) {
       gCode += `; ${line.substring(6)}\n`;
-      console.log(line.substring(6));
     } else if (line.startsWith("LOADTL/")) {
       const params = line.split("/")[1].split(",");
       gCode += `N${lineNumber++} T${
         params[0]
       }\nN${lineNumber++} M6\nN${lineNumber++} D1\n`;
-    } else if (line.startsWith("GOTO")) {
-      let parts = line.split("/");
+    } else if (line.startsWith("RAPID") && nextLine?.startsWith("GOTO")) {
+      let parts = nextLine.split("/");
       let coordinates = parts[1].split(",");
-      let [x, y, z] = coordinates.slice(1, 4);
-      gCode += `N${lineNumber++} G0 X${x} Y${y} Z${z}\n`;
+      let [x, y, z] = coordinates.slice(0, 3);
+      gCode += `N${lineNumber++} G0 X${Math.round(x * 1000) / 1000} Y${
+        Math.round(y * 1000) / 1000
+      } Z${Math.round(z * 1000) / 1000}\n`;
+    } else if (line.startsWith("FEDRAT") && nextLine?.startsWith("GOTO")) {
+      let parts = nextLine.split("/");
+      let feed = line.split("/");
+      let feedValue = feed[1].split(",");
+      let coordinates = parts[1].split(",");
+      let [x, y, z] = coordinates.slice(0, 3);
+      gCode += `N${lineNumber++} G1 X${Math.round(x * 1000) / 1000} Y${
+        Math.round(y * 1000) / 1000
+      } Z${Math.round(z * 1000) / 1000} F${
+        Math.round(feedValue[0] * 1000) / 1000
+      }\n`;
     } else if (line.startsWith("PROBE/POINTS")) {
       let parts = line.split(",");
       gCode += `N${lineNumber++} G38.2 Z-${parts[5]} F${parts[3]}\n`;
