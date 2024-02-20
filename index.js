@@ -16,7 +16,7 @@ function catiaAptToGCode(lines) {
       const params = line.split("/")[1].split(",");
       gCode += `N${lineNumber++} T${
         params[0]
-      }\nN${lineNumber++} M6\nN${lineNumber++} D1\n`;
+      }\nN${lineNumber++} M6\nN${lineNumber++} D1\n N${lineNumber++}UP_Z\n`;
     } else if (line.startsWith("RAPID") && nextLine?.startsWith("GOTO")) {
       let parts = nextLine.split("/");
       let coordinates = parts[1].split(",");
@@ -64,13 +64,17 @@ function catiaAptToGCode(lines) {
         gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
           Math.round(y * 1000) / 1000
         },100,100,2,1,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
-        console.log(dirY);
       } else if (dirY == -1) {
-        console.log(dirY);
         gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
           Math.round(y * 1000) / 1000
         },100,100,2,2,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
       }
+    } else if (line.startsWith("INSERT")) {
+      let parts = line.split("INSERT");
+      const insertText = parts[1];
+      gCode += `N${lineNumber++}${insertText}`;
+    } else if (line === "END\r") {
+      gCode += `N${lineNumber++} CYCLE800()\nN${lineNumber++} UP_Z\nN${lineNumber++} TIME\nN${lineNumber++} M1=330\nN${lineNumber++} M30\n`;
     }
   }
   return gCode;
