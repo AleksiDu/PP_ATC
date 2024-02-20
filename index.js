@@ -15,7 +15,7 @@ function catiaAptToGCode(lines) {
     } else if (line.startsWith("$$ OPERATION NAME")) {
       let parts = line.split(":");
 
-      gCode += `;  Operation: ${parts[1]}N${lineNumber++} G54\n`;
+      gCode += `;  Operation: ${parts[1]}\nN${lineNumber++} G54\n`;
     } else if (line.startsWith("LOADTL/")) {
       const params = line.split("/")[1].split(",");
       gCode += `N${lineNumber++} T${
@@ -48,25 +48,25 @@ function catiaAptToGCode(lines) {
       const arrOfCoords = gotoCoords.split(",");
       const [x, y, z, dirX, dirY, dirZ] = arrOfCoords;
       if (dirZ == 1) {
-        gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
+        gCode += `N${lineNumber++} CYCLE978(0,1,,1,${
           Math.round(z * 1000) / 1000
         },100,100,3,2,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
       } else if (dirZ == -1) {
         console.log("WRONG DIRECTION");
       } else if (dirX == 1) {
-        gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
+        gCode += `N${lineNumber++} CYCLE978(0,1,,1,${
           Math.round(x * 1000) / 1000
         },100,100,1,2,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
       } else if (dirX == -1) {
-        gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
+        gCode += `N${lineNumber++} CYCLE978(0,1,,1,${
           Math.round(x * 1000) / 1000
         },100,100,1,1,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
       } else if (dirY == 1) {
-        gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
+        gCode += `N${lineNumber++} CYCLE978(0,1,,1,${
           Math.round(y * 1000) / 1000
         },100,100,2,1,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
       } else if (dirY == -1) {
-        gCode += `N${lineNumber++} CYCLE978(100,10,,1,${
+        gCode += `N${lineNumber++} CYCLE978(0,1,,1,${
           Math.round(y * 1000) / 1000
         },100,100,2,2,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
       }
