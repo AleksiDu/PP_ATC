@@ -2,22 +2,22 @@ import * as fs from "fs";
 import extractPartName from "./Utils/extractPartName.js";
 import extractProjectName from "./Utils/extractProjectName.js";
 
-const inputFile = "./Input/PROBE_A.aptsource";
-const outputFile = "./Output/PROBE_A.MPF";
+const inputFile = "./Input/477Z3202_202_BROB_A.aptsource";
+const outputFile = "./Output/477Z3202_202_BROB_A.MPF";
 
 function catiaAptToGCode(lines) {
   let gCode = "";
   let lineNumber = 1;
   let isProbeSection = false;
 
-  for (let line of lines) {
-    const nextLine = lines[lines.indexOf(line) + 1];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const nextLine = lines[i + 1];
 
     if (line.startsWith("PPRINT") || line.startsWith("TPRINT/")) {
       gCode += `; ${line.substring(6)}\n`;
     } else if (line.startsWith("$$ OPERATION NAME")) {
       let parts = line.split(":");
-
       gCode += `;  Operation: ${parts[1]}\nN${lineNumber++} G54\n`;
     } else if (line.startsWith("LOADTL/")) {
       const params = line.split("/")[1].split(",");
