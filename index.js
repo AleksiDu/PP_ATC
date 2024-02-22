@@ -2,8 +2,8 @@ import * as fs from "fs";
 import extractPartName from "./Utils/extractPartName.js";
 import extractProjectName from "./Utils/extractProjectName.js";
 
-const inputFile = "./Input/477Z3202_202_BROB_A.aptsource";
-const outputFile = "./Output/477Z3202_202_BROB_A.MPF";
+const inputFile = "./Input/477Z3202_202_PROB_B.aptsource";
+const outputFile = "./Output/477Z3202_202_BROB_B.MPF";
 
 function catiaAptToGCode(lines) {
   let gCode = "";
@@ -67,11 +67,11 @@ function catiaAptToGCode(lines) {
       } else if (dirY == 1) {
         gCode += `N${lineNumber++} CYCLE978(0,1,,1,${
           Math.round(y * 1000) / 1000
-        },100,100,2,1,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
+        },100,100,2,2,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
       } else if (dirY == -1) {
         gCode += `N${lineNumber++} CYCLE978(0,1,,1,${
           Math.round(y * 1000) / 1000
-        },100,100,2,2,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
+        },100,100,2,1,1,"",,0,1.01,-1.01,,0.34,1,0,,1,0)\n`;
       }
     } else if (line.startsWith("INSERT")) {
       let parts = line.split("INSERT");
